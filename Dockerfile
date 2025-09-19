@@ -1,22 +1,17 @@
-FROM jrottenberg/ffmpeg:8-alpine AS ffmpeg
+FROM node:20-slim
 
-FROM node:current-alpine
+WORKDIR /app
 
-COPY --from=ffmpeg /usr/local/bin/ffmpeg /usr/local/bin/
-COPY --from=ffmpeg /usr/local/bin/ffprobe /usr/local/bin/
-
-RUN apk add --no-cache \
-    python3 \
-    make \
-    g++ \
-    && npm install -g npm@latest
-
-WORKDIR /usr/src/app
+RUN apt-get update && \
+    apt-get install -y ffmpeg && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm install --production
 
 COPY . .
 
-CMD ["node", "."]
+ENV NODE_ENV=production
+
+CMD ["node", "index.js"]
