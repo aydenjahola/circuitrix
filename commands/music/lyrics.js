@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const { Genius } = require("genius-lyrics");
+const Genius = require("genius-lyrics"); // Correct import
 
 const geniusClient = new Genius.Client(process.env.GENIUS_API_TOKEN);
 
@@ -21,6 +21,7 @@ module.exports = {
 
     if (!songQuery && queue && queue.songs.length > 0) {
       songQuery = queue.songs[0].name;
+      songQuery = songQuery.replace(/\([^)]*\)|\[[^\]]*\]/g, "").trim();
     }
 
     if (!songQuery) {
@@ -39,16 +40,35 @@ module.exports = {
       const lyrics = await song.lyrics();
 
       if (lyrics.length > 4096) {
-        const embed = new EmbedBuilder()
+        const lyricChunks = [];
+        for (let i = 0; i < lyrics.length; i += 4090) {
+          lyricChunks.push(lyrics.substring(i, i + 4090));
+        }
+
+        const firstEmbed = new EmbedBuilder()
           .setColor("#FF0000")
           .setTitle(`Lyrics for: ${song.title}`)
-          .setDescription(
-            `The lyrics are too long to display in Discord. [View on Genius](${song.url})`
-          )
+          .setDescription(lyricChunks[0])
           .setThumbnail(song.thumbnail)
-          .setFooter({ text: "Powered by Genius API" });
+          .setFooter({
+            text: `Part 1/${lyricChunks.length} - Powered by Genius API`,
+          });
 
-        return interaction.followUp({ embeds: [embed] });
+        await interaction.followUp({ embeds: [firstEmbed] });
+
+        for (let i = 1; i < lyricChunks.length; i++) {
+          const chunkEmbed = new EmbedBuilder()
+            .setColor("#FF0000")
+            .setDescription(lyricChunks[i])
+            .setFooter({
+              text: `Part ${i + 1}/${
+                lyricChunks.length
+              } - Powered by Genius API`,
+            });
+
+          await interaction.followUp({ embeds: [chunkEmbed] });
+        }
+        return;
       }
 
       const embed = new EmbedBuilder()
@@ -58,10 +78,10 @@ module.exports = {
         .setThumbnail(song.thumbnail)
         .setFooter({ text: "Powered by Genius API" });
 
-      interaction.followUp({ embeds: [embed] });
+      await interaction.followUp({ embeds: [embed] });
     } catch (error) {
       console.error("Error fetching lyrics:", error);
-      interaction.followUp(
+      await interaction.followUp(
         "❌ Failed to fetch lyrics. Please try again later."
       );
     }
