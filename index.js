@@ -52,6 +52,18 @@ client.distube
   })
   .on("finish", (queue) => {
     queue.textChannel.send("🎵 Queue finished!");
+  })
+  .on("pause", (queue) => {
+    queue.textChannel.send("⏸️ Music paused!");
+  })
+  .on("resume", (queue) => {
+    queue.textChannel.send("▶️ Music resumed!");
+  })
+  .on("volumeChange", (queue, volume) => {
+    queue.textChannel.send(`🔊 Volume changed to ${volume}%`);
+  })
+  .on("noRelated", (queue) => {
+    queue.textChannel.send("❌ Could not find related video for autoplay!");
   });
 
 // Function to recursively read commands from subdirectories
