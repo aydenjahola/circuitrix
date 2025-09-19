@@ -48,7 +48,7 @@ client.distube
   })
   .on("error", (channel, error) => {
     console.error("DisTube error:", error);
-    channel.send("❌ An error occurred: " + error.message);
+    queue.textChannel.send("❌ An error occurred: " + error.message);
   })
   .on("finish", (queue) => {
     queue.textChannel.send("🎵 Queue finished!");
