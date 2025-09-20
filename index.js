@@ -16,6 +16,56 @@ const path = require("path");
 const ServerSettings = require("./models/ServerSettings");
 const seedShopItems = require("./utils/seedShopItems");
 const seedSpyfallLocations = require("./utils/seedSpyfallLocations");
+const setupDisTubeEvents = require("./events/distubeEvents");
+
+// Console colors
+const colors = {
+  reset: "\x1b[0m",
+  bright: "\x1b[1m",
+  dim: "\x1b[2m",
+  underscore: "\x1b[4m",
+  blink: "\x1b[5m",
+  reverse: "\x1b[7m",
+  hidden: "\x1b[8m",
+
+  black: "\x1b[30m",
+  red: "\x1b[31m",
+  green: "\x1b[32m",
+  yellow: "\x1b[33m",
+  blue: "\x1b[34m",
+  magenta: "\x1b[35m",
+  cyan: "\x1b[36m",
+  white: "\x1b[37m",
+
+  bgBlack: "\x1b[40m",
+  bgRed: "\x1b[41m",
+  bgGreen: "\x1b[42m",
+  bgYellow: "\x1b[43m",
+  bgBlue: "\x1b[44m",
+  bgMagenta: "\x1b[45m",
+  bgCyan: "\x1b[46m",
+  bgWhite: "\x1b[47m",
+};
+
+const printBanner = () => {
+  console.log(`${colors.magenta}
+   ██████╗██╗██████╗ ██████╗ ██╗   ██╗██████╗ ████████╗██████╗ ██╗██╗  ██╗
+  ██╔════╝██║██╔══██╗██╔══██╗██║   ██║██╔══██╗╚══██╔══╝██╔══██╗██║╚██╗██╔╝
+  ██║     ██║██████╔╝██████╔╝██║   ██║██████╔╝   ██║   ██████╔╝██║ ╚███╔╝ 
+  ██║     ██║██╔══██╗██╔══██╗██║   ██║██╔══██╗   ██║   ██╔══██╗██║ ██╔██╗ 
+  ╚██████╗██║██║  ██║██║  ██║╚██████╔╝██║  ██║   ██║   ██║  ██║██║██╔╝ ██╗
+   ╚═════╝╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝╚═╝  ╚═╝
+  ${colors.reset}`);
+  console.log(
+    `${colors.cyan}${colors.bright}⚡ Circuitrix Discord Bot ${colors.reset}`
+  );
+  console.log(
+    `${colors.cyan}${colors.bright}✨ Developed with ❤️ by Ayden ${colors.reset}`
+  );
+  console.log(
+    `${colors.cyan}${colors.bright}🌐 https://github.com/aydenjahola ${colors.reset}\n`
+  );
+};
 
 const client = new Client({
   intents: [
@@ -34,38 +84,6 @@ client.distube = new DisTube(client, {
   plugins: [new SpotifyPlugin(), new SoundCloudPlugin()],
 });
 
-// DisTube event listeners
-client.distube
-  .on("playSong", (queue, song) => {
-    queue.textChannel.send(
-      `🎶 Playing: **${song.name}** - \`${song.formattedDuration}\``
-    );
-  })
-  .on("addSong", (queue, song) => {
-    queue.textChannel.send(
-      `✅ Added: **${song.name}** - \`${song.formattedDuration}\``
-    );
-  })
-  .on("error", (queue, error) => {
-    console.error("DisTube error:", error);
-    queue.textChannel.send("❌ An error occurred: " + error.message);
-  })
-  .on("finish", (queue) => {
-    queue.textChannel.send("🎵 Queue finished!");
-  })
-  .on("pause", (queue) => {
-    queue.textChannel.send("⏸️ Music paused!");
-  })
-  .on("resume", (queue) => {
-    queue.textChannel.send("▶️ Music resumed!");
-  })
-  .on("volumeChange", (queue, volume) => {
-    queue.textChannel.send(`🔊 Volume changed to ${volume}%`);
-  })
-  .on("noRelated", (queue) => {
-    queue.textChannel.send("❌ Could not find related video for autoplay!");
-  });
-
 // Function to recursively read commands from subdirectories
 function loadCommands(dir) {
   const files = fs.readdirSync(dir);
@@ -74,13 +92,32 @@ function loadCommands(dir) {
     if (fs.statSync(filePath).isDirectory()) {
       loadCommands(filePath);
     } else if (file.endsWith(".js")) {
-      const command = require(filePath);
-      client.commands.set(command.data.name, command);
+      try {
+        const command = require(filePath);
+        if (command.data && command.data.name) {
+          client.commands.set(command.data.name, command);
+          console.log(
+            `${colors.green}✅ Loaded command: ${colors.reset}${colors.cyan}/${command.data.name}${colors.reset}`
+          );
+        }
+      } catch (error) {
+        console.log(
+          `${colors.red}❌ Failed to load command: ${filePath}${colors.reset}`
+        );
+        console.error(error);
+      }
     }
   }
 }
 
+// Load commands
+console.log(
+  `${colors.yellow}${colors.bright}📦 Loading commands...${colors.reset}`
+);
 loadCommands(path.join(__dirname, "commands"));
+console.log(
+  `${colors.green}✅ Successfully loaded ${colors.bright}${client.commands.size}${colors.reset}${colors.green} commands!${colors.reset}\n`
+);
 
 async function registerCommands(guildId) {
   const commands = client.commands.map((cmd) => cmd.data.toJSON());
@@ -89,18 +126,38 @@ async function registerCommands(guildId) {
     await rest.put(Routes.applicationGuildCommands(client.user.id, guildId), {
       body: commands,
     });
-    console.log(`🔄 Registered commands for guild: ${guildId}`);
+    console.log(
+      `${colors.green}🔄 Registered ${colors.bright}${commands.length}${colors.reset}${colors.green} commands for guild: ${colors.cyan}${guildId}${colors.reset}`
+    );
   } catch (error) {
-    console.error("Error registering commands:", error);
+    console.log(
+      `${colors.red}❌ Error registering commands for guild ${guildId}:${colors.reset}`
+    );
+    console.error(error);
   }
 }
 
 client.once("ready", async () => {
-  console.log(`\n==============================`);
-  console.log(`🤖 Logged in as ${client.user.tag}`);
-  console.log(`==============================`);
+  printBanner();
+
+  console.log(
+    `${colors.green}${colors.bright}🚀 Bot successfully logged in as ${colors.cyan}${client.user.tag}${colors.reset}`
+  );
+  console.log(
+    `${colors.green}${colors.bright}📊 Serving ${colors.cyan}${client.guilds.cache.size}${colors.reset}${colors.green} servers${colors.reset}`
+  );
+  console.log(
+    `${colors.green}${colors.bright}👥 Watching ${colors.cyan}${client.users.cache.size}${colors.reset}${colors.green} users${colors.reset}\n`
+  );
+
+  // Set up DisTube events
+  setupDisTubeEvents(client.distube, client.user.username);
 
   const guilds = client.guilds.cache.map((guild) => guild.id);
+  console.log(
+    `${colors.yellow}${colors.bright}⚙️  Initializing server configurations...${colors.reset}`
+  );
+
   await Promise.all(
     guilds.map(async (guildId) => {
       await seedShopItems(guildId);
@@ -110,29 +167,53 @@ client.once("ready", async () => {
   );
 
   client.user.setPresence({
-    activities: [{ name: "Powering Servers!", type: 3 }],
+    activities: [{ name: "Powering Servers! 🚀", type: 3 }],
     status: PresenceUpdateStatus.Online,
   });
-  console.log(`\n==============================\n`);
+
+  console.log(
+    `\n${colors.green}${colors.bright}🎉 Bot is now fully operational and ready!${colors.reset}`
+  );
+  console.log(
+    `${colors.cyan}${colors.bright}==============================================${colors.reset}\n`
+  );
 });
 
 client.on("guildCreate", async (guild) => {
   try {
     await ServerSettings.create({ guildId: guild.id });
-    console.log(`✅ Registered new server: ${guild.name} (ID: ${guild.id})`);
+    console.log(
+      `${colors.green}✅ Registered new server: ${colors.cyan}${guild.name}${colors.reset} ${colors.dim}(${guild.id})${colors.reset}`
+    );
     await seedShopItems(guild.id);
     await seedSpyfallLocations(guild.id);
     await registerCommands(guild.id);
+
+    console.log(
+      `${colors.green}🎉 Successfully initialized ${colors.cyan}${guild.name}${colors.reset}${colors.green} with all features!${colors.reset}`
+    );
   } catch (error) {
-    console.error("Error registering new server or commands:", error);
+    console.log(`${colors.red}❌ Error registering new server:${colors.reset}`);
+    console.error(error);
   }
 });
 
 // MongoDB connection
+console.log(
+  `${colors.yellow}${colors.bright}🔗 Connecting to MongoDB...${colors.reset}`
+);
 mongoose
   .connect(process.env.MONGODB_URI)
-  .then(() => console.log("✅ Connected to MongoDB"))
-  .catch((err) => console.error("❌ Failed to connect to MongoDB", err));
+  .then(() => {
+    console.log(
+      `${colors.green}✅ Successfully connected to MongoDB!${colors.reset}\n`
+    );
+  })
+  .catch((err) => {
+    console.log(`${colors.red}❌ Failed to connect to MongoDB:${colors.reset}`);
+    console.error(err);
+    process.exit(1);
+  });
 
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
@@ -141,9 +222,12 @@ client.on("interactionCreate", async (interaction) => {
   try {
     await command.execute(interaction, client);
   } catch (err) {
-    console.error("Error executing command:", err);
+    console.log(
+      `${colors.red}❌ Error executing command ${colors.cyan}/${interaction.commandName}${colors.reset}`
+    );
+    console.error(err);
     const replyOptions = {
-      content: "Error executing command!",
+      content: "❌ There was an error while executing this command!",
       ephemeral: true,
     };
     if (interaction.deferred || interaction.replied) {
@@ -154,5 +238,38 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
-client.on("error", (err) => console.error("Client error:", err));
-client.login(process.env.BOT_TOKEN);
+client.on("error", (err) => {
+  console.log(`${colors.red}${colors.bright}⚠️  Client error:${colors.reset}`);
+  console.error(err);
+});
+
+process.on("unhandledRejection", (error) => {
+  console.log(
+    `${colors.red}${colors.bright}⚠️  Unhandled promise rejection:${colors.reset}`
+  );
+  console.error(error);
+});
+
+process.on("uncaughtException", (error) => {
+  console.log(
+    `${colors.red}${colors.bright}⚠️  Uncaught exception:${colors.reset}`
+  );
+  console.error(error);
+});
+
+// Login
+console.log(
+  `${colors.yellow}${colors.bright}🔐 Logging in to Discord...${colors.reset}`
+);
+client
+  .login(process.env.BOT_TOKEN)
+  .then(() => {
+    console.log(
+      `${colors.green}✅ Authentication successful!${colors.reset}\n`
+    );
+  })
+  .catch((error) => {
+    console.log(`${colors.red}❌ Failed to login to Discord:${colors.reset}`);
+    console.error(error);
+    process.exit(1);
+  });
