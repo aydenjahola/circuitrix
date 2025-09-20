@@ -2,13 +2,13 @@ FROM node:24-alpine
 
 WORKDIR /app
 
-RUN apt-get update && \
-    apt-get install -y \
+RUN apk update && \
+    apk add --no-cache \
     ffmpeg \
-    build-essential \
+    build-base \
     python3 \
     git \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/cache/apk/*
 
 COPY package*.json ./
 
