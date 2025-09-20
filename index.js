@@ -110,7 +110,7 @@ client.once("ready", async () => {
   );
 
   client.user.setPresence({
-    activities: [{ name: "Degenerate Gamers!", type: 3 }],
+    activities: [{ name: "Powering Servers!", type: 3 }],
     status: PresenceUpdateStatus.Online,
   });
   console.log(`\n==============================\n`);
