@@ -293,6 +293,7 @@ module.exports = {
           }))
         )
     ),
+  category: "Games",
 
   async execute(interaction, client) {
     const userId = interaction.user.id;

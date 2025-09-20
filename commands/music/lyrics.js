@@ -13,6 +13,8 @@ module.exports = {
         .setDescription("Song name to search lyrics for (optional)")
         .setRequired(false)
     ),
+  category: "Music",
+
   async execute(interaction, client) {
     await interaction.deferReply();
 

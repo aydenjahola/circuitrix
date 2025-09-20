@@ -4,6 +4,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("stats")
     .setDescription("Displays server statistics."),
+  category: "Utils",
 
   async execute(interaction) {
     try {

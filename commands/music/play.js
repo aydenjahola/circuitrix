@@ -10,6 +10,8 @@ module.exports = {
         .setDescription("Song name or URL")
         .setRequired(true)
     ),
+  category: "Music",
+
   async execute(interaction, client) {
     await interaction.deferReply();
     const query = interaction.options.getString("query");

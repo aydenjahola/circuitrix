@@ -4,6 +4,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("ping")
     .setDescription("Replies with Pong! and bot latency"),
+  category: "Core",
 
   async execute(interaction, client) {
     try {

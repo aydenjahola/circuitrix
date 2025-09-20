@@ -4,6 +4,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("botinfo")
     .setDescription("Displays information about the bot"),
+  category: "Information",
 
   async execute(interaction, client) {
     try {

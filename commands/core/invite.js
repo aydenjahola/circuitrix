@@ -4,6 +4,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("invite")
     .setDescription("Provides an invite link to add the bot to your server."),
+  category: "Core",
 
   async execute(interaction, client) {
     try {

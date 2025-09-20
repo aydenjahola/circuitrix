@@ -4,6 +4,8 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("skip")
     .setDescription("Skips the current song."),
+  category: "Music",
+
   async execute(interaction, client) {
     const queue = client.distube.getQueue(interaction.guildId);
     if (!queue) return interaction.reply("❌ No songs in queue!");

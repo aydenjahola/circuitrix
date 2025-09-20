@@ -12,6 +12,7 @@ module.exports = {
         .setRequired(true)
     ),
   isModOnly: true,
+  category: "Minecraft",
 
   async execute(interaction) {
     const username = interaction.options.getString("username");

@@ -21,6 +21,7 @@ module.exports = {
         .setDescription("Your DCU email address")
         .setRequired(true)
     ),
+  category: "Verification",
 
   async execute(interaction, client) {
     // Fetch the server settings from the database using guild ID

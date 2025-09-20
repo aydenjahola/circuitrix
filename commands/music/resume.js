@@ -4,6 +4,8 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("resume")
     .setDescription("Resumes the paused song"),
+  category: "Music",
+
   async execute(interaction, client) {
     const queue = client.distube.getQueue(interaction.guildId);
 

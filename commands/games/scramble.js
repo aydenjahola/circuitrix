@@ -102,6 +102,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("scramble")
     .setDescription("Play a word scramble game"),
+  category: "Games",
 
   async execute(interaction) {
     const userId = interaction.user.id;

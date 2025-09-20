@@ -51,6 +51,7 @@ module.exports = {
         )
         .setRequired(false)
     ),
+  category: "Moderation",
 
   async execute(interaction) {
     // Check if the user has admin permissions

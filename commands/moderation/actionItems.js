@@ -15,6 +15,7 @@ module.exports = {
         )
         .setRequired(true)
     ),
+  category: "Moderation",
 
   async execute(interaction) {
     const serverSettings = await ServerSettings.findOne({

@@ -13,6 +13,7 @@ module.exports = {
         .setDescription("The item you want to buy (use item name)")
         .setRequired(false)
     ),
+  category: "Economy",
 
   async execute(interaction) {
     const { user, guild } = interaction;

@@ -13,6 +13,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("spyfall")
     .setDescription("Start a game of Spyfall."),
+  category: "Games",
 
   async execute(interaction) {
     const guildId = interaction.guild.id;

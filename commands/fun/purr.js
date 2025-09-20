@@ -49,6 +49,7 @@ module.exports = {
         )
         .setRequired(false)
     ),
+  category: "Fun",
 
   async execute(interaction) {
     const category = interaction.options.getString("category");

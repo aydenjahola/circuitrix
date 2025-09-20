@@ -4,6 +4,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("serverinfo")
     .setDescription("Displays information about the server"),
+  category: "Information",
 
   async execute(interaction) {
     try {

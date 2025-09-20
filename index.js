@@ -46,7 +46,7 @@ client.distube
       `✅ Added: **${song.name}** - \`${song.formattedDuration}\``
     );
   })
-  .on("error", (channel, error) => {
+  .on("error", (queue, error) => {
     console.error("DisTube error:", error);
     queue.textChannel.send("❌ An error occurred: " + error.message);
   })

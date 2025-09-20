@@ -5,6 +5,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("work")
     .setDescription("Work to earn coins and experience random events!"),
+  category: "Economy",
 
   async execute(interaction) {
     const { user, guild } = interaction;

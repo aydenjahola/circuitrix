@@ -5,6 +5,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("stopspyfall")
     .setDescription("Stop the current Spyfall game in this server."),
+  category: "Games",
 
   async execute(interaction) {
     try {

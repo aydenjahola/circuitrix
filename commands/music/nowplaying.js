@@ -4,6 +4,8 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("nowplaying")
     .setDescription("Shows information about the current song"),
+  category: "Music",
+
   async execute(interaction, client) {
     const queue = client.distube.getQueue(interaction.guildId);
 

@@ -4,6 +4,8 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("shuffle")
     .setDescription("Shuffles the current queue"),
+  category: "Music",
+
   async execute(interaction, client) {
     const queue = client.distube.getQueue(interaction.guildId);
 

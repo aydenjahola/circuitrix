@@ -12,6 +12,8 @@ module.exports = {
         .setDescription("Your message to the AI")
         .setRequired(true)
     ),
+  category: "AI",
+
   async execute(interaction) {
     await interaction.deferReply(); // Defer initial response
 

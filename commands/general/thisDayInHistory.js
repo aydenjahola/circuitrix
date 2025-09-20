@@ -5,6 +5,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("thisdayinhistory")
     .setDescription("Shows historical events that happened on this day."),
+  category: "General",
 
   async execute(interaction) {
     try {

@@ -13,6 +13,7 @@ module.exports = {
         .setDescription("Name of the event to join")
         .setRequired(true)
     ),
+  category: "Events",
 
   async execute(interaction) {
     const eventName = interaction.options.getString("event_name");

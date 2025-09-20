@@ -27,6 +27,7 @@ module.exports = {
         .setMaxValue(100)
     ),
   isModOnly: true,
+  category: "Moderation",
 
   async execute(interaction) {
     try {

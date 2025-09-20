@@ -6,6 +6,7 @@ module.exports = {
     .setName("clearleaderboard")
     .setDescription("Clears all entries in the trivia leaderboard"),
   isModOnly: true,
+  category: "Moderation",
 
   async execute(interaction) {
     try {

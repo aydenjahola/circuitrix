@@ -6,6 +6,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("listevents")
     .setDescription("List all upcoming events."),
+  category: "Events",
 
   async execute(interaction) {
     const { user } = interaction;

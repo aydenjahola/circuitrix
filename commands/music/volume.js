@@ -12,6 +12,8 @@ module.exports = {
         .setMinValue(1)
         .setMaxValue(100)
     ),
+  category: "Music",
+
   async execute(interaction, client) {
     const volume = interaction.options.getInteger("level");
     const queue = client.distube.getQueue(interaction.guildId);

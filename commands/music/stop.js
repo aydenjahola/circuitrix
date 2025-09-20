@@ -4,6 +4,8 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("stop")
     .setDescription("Stops the music and clears the queue."),
+  category: "Music",
+
   async execute(interaction, client) {
     const queue = client.distube.getQueue(interaction.guildId);
     if (!queue) return interaction.reply("❌ No music is playing!");

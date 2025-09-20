@@ -6,6 +6,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("inventory")
     .setDescription("View your inventory with item rarity"),
+  category: "Economy",
 
   async execute(interaction) {
     const { user, guild } = interaction;

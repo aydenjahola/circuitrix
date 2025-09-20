@@ -8,6 +8,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("help")
     .setDescription("Lists all available commands"),
+  category: "Core",
 
   async execute(interaction, client) {
     try {
@@ -16,16 +17,19 @@ module.exports = {
       );
 
       const serverName = interaction.guild.name;
-      const generalCommands = [];
-      const modCommands = [];
 
-      // Categorize commands
+      // Group commands by category
+      const categories = {};
       client.commands.forEach((command) => {
+        const category = command.category || "Uncategorized"; // Default to "Uncategorized"
+        if (!categories[category]) {
+          categories[category] = [];
+        }
+
         const commandLine = `/${command.data.name} - ${command.data.description}`;
-        if (!command.isModOnly) {
-          generalCommands.push(commandLine);
-        } else if (isMod) {
-          modCommands.push(`${commandLine} (Mods only)`);
+        // Check if command is mod-only and user has permissions
+        if (!command.isModOnly || (command.isModOnly && isMod)) {
+          categories[category].push(commandLine);
         }
       });
 
@@ -43,47 +47,37 @@ module.exports = {
 
       // Function to split commands into fields under 1024 characters
       const addCommandFields = (embed, commands, title) => {
+        if (commands.length === 0) return;
+
         let commandChunk = "";
         let chunkCount = 1;
 
         commands.forEach((command) => {
-          // Check if adding this command will exceed the 1024 character limit
-          if ((commandChunk + command).length > 1024) {
-            // Add current chunk as a new field
+          if ((commandChunk + command + "\n").length > 1024) {
             embed.addFields({
               name: `${title} (Part ${chunkCount})`,
               value: commandChunk,
             });
-            commandChunk = ""; // Reset chunk for new field
+            commandChunk = "";
             chunkCount += 1;
           }
-          // Append command to the current chunk
           commandChunk += command + "\n";
         });
 
-        // Add any remaining commands in the last chunk
         if (commandChunk) {
           embed.addFields({
-            name: `${title} (Part ${chunkCount})`,
+            name: chunkCount > 1 ? `${title} (Part ${chunkCount})` : title,
             value: commandChunk,
           });
         }
       };
 
-      // Add general commands in fields
-      if (generalCommands.length > 0) {
-        addCommandFields(helpEmbed, generalCommands, "General Commands");
+      // Add commands for each category
+      for (const [categoryName, commands] of Object.entries(categories)) {
+        addCommandFields(helpEmbed, commands, `${categoryName} Commands`);
       }
 
-      // Add mod-only commands in fields, if user is a mod
-      if (isMod && modCommands.length > 0) {
-        addCommandFields(helpEmbed, modCommands, "Mod-Only Commands");
-      }
-
-      // Send the single embed
-      await interaction.reply({
-        embeds: [helpEmbed],
-      });
+      await interaction.reply({ embeds: [helpEmbed] });
     } catch (error) {
       console.error("Error executing the help command:", error);
       await interaction.reply({
