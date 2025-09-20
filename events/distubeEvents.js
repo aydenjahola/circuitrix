@@ -40,14 +40,20 @@ module.exports = (distube, botName) => {
       queue.textChannel.send({ embeds: [embed] });
     })
     .on("error", (channel, error) => {
-      console.error("DisTube error:", error);
-      const embed = createEmbed(
-        0xff0000,
-        "❌ Error",
-        `An error occurred: ${error.message}`
-      );
-      if (channel && channel.send) {
-        channel.send({ embeds: [embed] });
+      // Check if the 'error' is actually an Error object
+      if (error instanceof Error) {
+        console.error("DisTube error:", error);
+        if (channel && channel.send) {
+          channel.send("❌ An error occurred: " + error.message.slice(0, 1000));
+        }
+      } else {
+        // Handle cases where 'error' might be something else (like a Queue object)
+        console.error("Unexpected error parameter received:", typeof error);
+        console.error("Error content:", error);
+
+        if (channel && channel.send) {
+          channel.send("❌ An unexpected playback error occurred.");
+        }
       }
     })
     .on("finish", (queue) => {
