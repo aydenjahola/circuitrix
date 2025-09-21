@@ -26,6 +26,8 @@ module.exports = {
         .setDescription("Whether the response should be ephemeral")
         .setRequired(false)
     ),
+  category: "General",
+
   async execute(interaction) {
     const word = interaction.options.getString("word").toLowerCase();
     const isEphemeral = interaction.options.getBoolean("ephemeral") || false;

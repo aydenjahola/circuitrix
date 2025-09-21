@@ -12,6 +12,7 @@ module.exports = {
         .setDescription("Name of the event to leave")
         .setRequired(true)
     ),
+  category: "Events",
 
   async execute(interaction) {
     const eventName = interaction.options.getString("event_name");

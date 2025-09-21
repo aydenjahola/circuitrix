@@ -5,6 +5,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("daily")
     .setDescription("Claim your daily reward and start a streak!"),
+  category: "Economy",
 
   async execute(interaction) {
     const { user, guild } = interaction;

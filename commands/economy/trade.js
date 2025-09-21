@@ -31,6 +31,7 @@ module.exports = {
         .setDescription("Amount of coins to trade")
         .setRequired(false)
     ),
+  category: "Economy",
 
   async execute(interaction) {
     const { user, guild } = interaction;

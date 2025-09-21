@@ -9,6 +9,7 @@ module.exports = {
     .setName("servers")
     .setDescription("Displays a list of servers the bot is currently in"),
   isModOnly: true,
+  category: "Moderation",
 
   async execute(interaction) {
     try {

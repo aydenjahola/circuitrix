@@ -15,6 +15,7 @@ module.exports = {
         .setRequired(false)
     ),
   isModOnly: true,
+  category: "Moderation",
 
   async execute(interaction) {
     try {

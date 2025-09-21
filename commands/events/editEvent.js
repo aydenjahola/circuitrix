@@ -55,6 +55,7 @@ module.exports = {
           { name: "Monthly", value: "monthly" }
         )
     ),
+  category: "Events",
 
   async execute(interaction) {
     const name = interaction.options.getString("name");

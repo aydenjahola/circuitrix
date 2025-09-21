@@ -28,6 +28,7 @@ module.exports = {
         .setRequired(true)
     ),
   isModOnly: true,
+  category: "Moderation",
 
   async execute(interaction) {
     let replySent = false;

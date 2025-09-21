@@ -12,6 +12,7 @@ module.exports = {
         .setDescription("Your verification code")
         .setRequired(true)
     ),
+  category: "Verification",
 
   async execute(interaction, client) {
     // Fetch server settings from the database

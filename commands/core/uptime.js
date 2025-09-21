@@ -4,6 +4,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("uptime")
     .setDescription("Shows how long the bot has been running"),
+  category: "Core",
 
   async execute(interaction, client) {
     try {

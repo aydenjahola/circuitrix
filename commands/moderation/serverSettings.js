@@ -11,6 +11,7 @@ module.exports = {
     .setDescription("Displays the current server settings"),
 
   isModOnly: true,
+  category: "Moderation",
 
   async execute(interaction) {
     let replySent = false;

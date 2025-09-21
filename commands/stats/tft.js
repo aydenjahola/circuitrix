@@ -13,6 +13,7 @@ module.exports = {
         )
         .setRequired(true)
     ),
+  category: "Stats",
 
   async execute(interaction) {
     const username = interaction.options.getString("username");

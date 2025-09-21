@@ -83,6 +83,7 @@ module.exports = {
         .setDescription("The word to find associations for")
         .setRequired(true)
     ),
+  category: "General",
 
   async execute(interaction) {
     const word = interaction.options.getString("word");

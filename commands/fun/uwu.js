@@ -11,6 +11,8 @@ module.exports = {
         .setDescription("The text to uwufy")
         .setRequired(true)
     ),
+  category: "Fun",
+
   async execute(interaction) {
     const inputText = interaction.options.getString("text");
 

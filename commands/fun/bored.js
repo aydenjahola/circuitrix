@@ -5,6 +5,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("bored")
     .setDescription("Get a random activity to do."),
+  category: "Fun",
 
   async execute(interaction) {
     try {

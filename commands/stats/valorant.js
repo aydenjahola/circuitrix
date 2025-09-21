@@ -41,6 +41,8 @@ module.exports = {
         .setDescription("Include roles stats?")
         .setRequired(false)
     ),
+  category: "Stats",
+
   async execute(interaction) {
     // Immediately defer the reply
     await interaction.deferReply();

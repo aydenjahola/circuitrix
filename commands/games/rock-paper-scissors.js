@@ -15,6 +15,7 @@ module.exports = {
           { name: "Scissors", value: "scissors" }
         )
     ),
+  category: "Games",
 
   async execute(interaction) {
     const userChoice = interaction.options.getString("choice");

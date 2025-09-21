@@ -12,6 +12,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("sell")
     .setDescription("Sell an item from your inventory."),
+  category: "Economy",
 
   async execute(interaction) {
     const { user, guild } = interaction;

@@ -1,0 +1,7 @@
+---
+services:
+  bot:
+    image: ghcr.io/aydenjahola/circuitrix:latest
+    container_name: discord-bot
+    restart: unless-stopped
+    env_file: .env

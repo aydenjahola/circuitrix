@@ -1,6 +1,14 @@
-FROM node:current-alpine
+FROM node:24-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /app
+
+RUN apk update && \
+    apk add --no-cache \
+    ffmpeg \
+    build-base \
+    python3 \
+    git \
+    && rm -rf /var/cache/apk/*
 
 COPY package*.json ./
 
@@ -8,4 +16,6 @@ RUN npm install
 
 COPY . .
 
-CMD ["node", "."]
+ENV NODE_ENV=production
+
+CMD ["node", "index.js"]

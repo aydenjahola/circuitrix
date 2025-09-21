@@ -5,6 +5,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("leaderboard")
     .setDescription("Displays the trivia leaderboard"),
+  category: "Utils",
 
   async execute(interaction, client) {
     const guild = interaction.guild;

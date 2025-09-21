@@ -12,6 +12,8 @@ module.exports = {
         .setDescription("The term to look up")
         .setRequired(true)
     ),
+  category: "General",
+
   async execute(interaction, client) {
     const term = interaction.options.getString("term").toLowerCase();
     const guild = interaction.guild;
