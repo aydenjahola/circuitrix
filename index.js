@@ -96,7 +96,6 @@ client.distube = new DisTube(client, {
   emitAddListWhenCreatingQueue: true,
   savePreviousSongs: false, // lower memory over long sessions
   joinNewVoiceChannel: true, // smoother UX if user moves VC
-  ffmpeg: { path: ffmpeg },
 });
 
 // Function to recursively read commands from subdirectories
