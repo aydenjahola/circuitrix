@@ -7,8 +7,9 @@ const {
   Routes,
   PresenceUpdateStatus,
 } = require("discord.js");
-const { DisTube } = require("distube");
+const { DisTube, isVoiceChannelEmpty } = require("distube");
 const { SpotifyPlugin } = require("@distube/spotify");
+const { YouTubePlugin } = require("@distube/youtube");
 const { SoundCloudPlugin } = require("@distube/soundcloud");
 const mongoose = require("mongoose");
 const fs = require("fs");
@@ -17,6 +18,7 @@ const ServerSettings = require("./models/ServerSettings");
 const seedShopItems = require("./utils/seedShopItems");
 const seedSpyfallLocations = require("./utils/seedSpyfallLocations");
 const setupDisTubeEvents = require("./events/distubeEvents");
+const ffmpeg = require("ffmpeg-static");
 
 // Console colors
 const colors = {
@@ -84,8 +86,17 @@ client.commands = new Collection();
 
 // Initialize DisTube
 client.distube = new DisTube(client, {
+  plugins: [
+    new YouTubePlugin(), // YouTube takes priority
+    new SpotifyPlugin(), // resolves Spotify → YouTube
+    new SoundCloudPlugin(), // resolves SoundCloud → YouTube
+  ],
   emitNewSongOnly: true,
-  plugins: [new SpotifyPlugin(), new SoundCloudPlugin()],
+  emitAddSongWhenCreatingQueue: false, // scale for big playlists
+  emitAddListWhenCreatingQueue: true,
+  savePreviousSongs: false, // lower memory over long sessions
+  joinNewVoiceChannel: true, // smoother UX if user moves VC
+  ffmpeg: { path: ffmpeg },
 });
 
 // Function to recursively read commands from subdirectories
@@ -199,6 +210,35 @@ client.on("guildCreate", async (guild) => {
   } catch (error) {
     console.log(`${colors.red}❌ Error registering new server:${colors.reset}`);
     console.error(error);
+  }
+});
+
+client.on("voiceStateUpdate", async (oldState, newState) => {
+  try {
+    // ignore bot state changes (including the music bot itself)
+    if (oldState.member?.user?.bot || newState.member?.user?.bot) return;
+
+    const guildId = oldState.guild?.id || newState.guild?.id;
+    if (!guildId) return;
+
+    const queue = client.distube.getQueue(guildId);
+    if (!queue) return;
+
+    const vc = queue.voice?.channel ?? queue.voiceChannel;
+    if (!vc) return;
+
+    // Only react to humans leaving/moving out of our VC
+    const userLeftOurVC =
+      oldState.channelId === vc.id && newState.channelId !== vc.id;
+    if (!userLeftOurVC) return;
+
+    // Check emptiness based on the channel they just left
+    if (isVoiceChannelEmpty(oldState)) {
+      client.distube.voices.leave(guildId);
+      queue.textChannel?.send("🔇 Channel is empty — leaving.");
+    }
+  } catch (e) {
+    console.error("voiceStateUpdate immediate-leave error:", e);
   }
 });
 

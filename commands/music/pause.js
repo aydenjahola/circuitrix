@@ -1,28 +1,36 @@
 const { SlashCommandBuilder } = require("discord.js");
+const { requireVC, requireQueue } = require("../../utils/musicGuards");
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("pause")
-    .setDescription("Pauses the current song"),
+    .setDescription("Pauses the current song."),
   category: "Music",
 
   async execute(interaction, client) {
-    const queue = client.distube.getQueue(interaction.guildId);
-
-    if (!queue) {
-      return interaction.reply("❌ There is no music playing!");
-    }
-
-    if (queue.paused) {
-      return interaction.reply("⏸️ Music is already paused!");
-    }
-
     try {
-      await queue.pause();
-      interaction.reply("⏸️ Paused the current song!");
-    } catch (error) {
-      console.error(error);
-      interaction.reply("❌ Failed to pause the music.");
+      await interaction.deferReply({ ephemeral: false });
+
+      requireVC(interaction);
+      const queue = requireQueue(client, interaction);
+
+      if (queue.paused) {
+        return interaction.followUp({
+          content: "⏸️ Music is already paused.",
+          ephemeral: true,
+        });
+      }
+
+      queue.pause();
+      return interaction.followUp("⏸️ Paused the current song!");
+    } catch (e) {
+      console.error("pause command failed:", e);
+      const msg = e?.message || "❌ Failed to pause the music.";
+      // If something above threw (e.g., guards), ensure user gets a response
+      if (interaction.deferred || interaction.replied) {
+        return interaction.followUp({ content: msg, ephemeral: true });
+      }
+      return interaction.reply({ content: msg, ephemeral: true });
     }
   },
 };
