@@ -18,7 +18,6 @@ const ServerSettings = require("./models/ServerSettings");
 const seedShopItems = require("./utils/seedShopItems");
 const seedSpyfallLocations = require("./utils/seedSpyfallLocations");
 const setupDisTubeEvents = require("./events/distubeEvents");
-const ffmpeg = require("ffmpeg-static");
 
 // Console colors
 const colors = {
@@ -99,7 +98,6 @@ client.distube = new DisTube(client, {
   emitAddListWhenCreatingQueue: true,
   savePreviousSongs: false, // lower memory over long sessions
   joinNewVoiceChannel: true, // smoother UX if user moves VC
-  ffmpeg: { path: ffmpeg },
 });
 
 // Function to recursively read commands from subdirectories
