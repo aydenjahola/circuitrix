@@ -9,7 +9,7 @@ const {
 } = require("discord.js");
 const { DisTube, isVoiceChannelEmpty } = require("distube");
 const { SpotifyPlugin } = require("@distube/spotify");
-const { YouTubePlugin } = require("@distube/youtube");
+const { YtDlpPlugin } = require("@distube/yt-dlp");
 const { SoundCloudPlugin } = require("@distube/soundcloud");
 const mongoose = require("mongoose");
 const fs = require("fs");
@@ -87,7 +87,10 @@ client.commands = new Collection();
 // Initialize DisTube
 client.distube = new DisTube(client, {
   plugins: [
-    new YouTubePlugin(), // YouTube takes priority
+    new YtDlpPlugin({
+      // Let the plugin download a bundled yt-dlp if needed.
+      update: true,
+    }),
     new SpotifyPlugin(), // resolves Spotify → YouTube
     new SoundCloudPlugin(), // resolves SoundCloud → YouTube
   ],
@@ -152,7 +155,7 @@ async function registerCommands(guildId) {
   }
 }
 
-client.once("ready", async () => {
+client.once("clientReady", async () => {
   printBanner();
 
   console.log(
